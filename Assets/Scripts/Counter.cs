@@ -1,7 +1,6 @@
 using System;
-using UnityEngine;
 
-public class CounterModel : MonoBehaviour
+public class Counter
 {
     private int _count;
 
