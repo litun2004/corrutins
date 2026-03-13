@@ -1,19 +1,28 @@
-using System.Collections;
+Ôªøusing System.Collections;
 using UnityEngine;
 
-public class InputReader : MonoBehaviour
+public class CounterController : MonoBehaviour
 {
-    [SerializeField] private View _view;
+    [SerializeField] private CounterView _view;
     [SerializeField] private float _delay = 0.5f;
 
-    private Model _model;
+    private CounterModel _model;
     private bool _isCounting;
     private Coroutine _coroutine;
 
     private void Start()
     {
-        _model = new Model();
-        _view.UpdateCount(_model.Count);
+        _model = new CounterModel();
+        _model.CountChanged += OnCountChanged;
+        OnCountChanged(_model.Count);
+    }
+
+    private void OnDestroy()
+    {
+        if (_model != null)
+        {
+            _model.CountChanged -= OnCountChanged;
+        }
     }
 
     private void Update()
@@ -36,7 +45,7 @@ public class InputReader : MonoBehaviour
         _isCounting = true;
         _coroutine = StartCoroutine(CountUp());
 
-        Debug.Log($"Õ‡Ê‡ÚËÂ 1: {_isCounting}");
+        Debug.Log($"–ù–∞–∂–∞—Ç–∏–µ 1: {_isCounting}");
     }
 
     private void StopCounting()
@@ -48,16 +57,20 @@ public class InputReader : MonoBehaviour
             StopCoroutine(_coroutine);
         }
 
-        Debug.Log($"Õ‡Ê‡ÚËÂ 2: {_isCounting}");
+        Debug.Log($"–ù–∞–∂–∞—Ç–∏–µ 2: {_isCounting}");
     }
 
     private IEnumerator CountUp()
-    {        
+    {
         while (_isCounting)
         {
-            _model.Increment();
-            _view.UpdateCount(_model.Count);
-            yield return new WaitForSeconds(_delay);          
+            _model.Increment();         
+            yield return new WaitForSeconds(_delay);
         }
+    }
+
+    private void OnCountChanged(int newCount)
+    {
+        _view.UpdateCount(newCount);
     }
 }

@@ -1,7 +1,7 @@
 using TMPro;
 using UnityEngine;
 
-public class View : MonoBehaviour
+public class CounterView : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI _text;
 
