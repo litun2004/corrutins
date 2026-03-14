@@ -3,74 +3,74 @@ using UnityEngine;
 
 public class CounterController : MonoBehaviour
 {
-    [SerializeField] private CounterView _view;
+    [SerializeField] private View _view;
     [SerializeField] private float _delay = 0.5f;
 
-    private CounterModel _model;
-    private bool _isCounting;
-    private Coroutine _coroutine;
+    [SerializeField] private InputReader _inputReader;
+    private Counter _model;
+    private Coroutine _countCoroutine;
 
     private void Start()
     {
-        _model = new CounterModel();
-        _model.CountChanged += OnCountChanged;
-        OnCountChanged(_model.Count);
+        _model = new Counter();
+        _inputReader.Clicked += OnClicked;
+
+        UpdateView(_model.Count);
     }
 
     private void OnDestroy()
     {
-        if (_model != null)
+        _inputReader.Clicked -= OnClicked;
+
+        if (_countCoroutine != null)
         {
-            _model.CountChanged -= OnCountChanged;
+            StopCoroutine(_countCoroutine);
         }
     }
 
-    private void Update()
+    private void OnClicked()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (_countCoroutine != null)
         {
-            if (_isCounting)
-            {
-                StopCounting();
-            }
-            else
-            {
-                StartCounting();
-            }
+            StopCounting();
+
+            Debug.Log($"Нажатие 2:");
+        }
+        else
+        {
+            StartCounting();
+
+            Debug.Log($"Нажатие 1:");
         }
     }
 
     private void StartCounting()
     {
-        _isCounting = true;
-        _coroutine = StartCoroutine(CountUp());
+        _countCoroutine = StartCoroutine(CountUp());
 
-        Debug.Log($"Нажатие 1: {_isCounting}");
     }
 
     private void StopCounting()
     {
-        _isCounting = false;
-
-        if (_coroutine != null)
+        if (_countCoroutine != null)
         {
-            StopCoroutine(_coroutine);
-        }
-
-        Debug.Log($"Нажатие 2: {_isCounting}");
+            StopCoroutine(_countCoroutine);
+            _countCoroutine = null;
+        }       
     }
 
     private IEnumerator CountUp()
     {
-        while (_isCounting)
+        while (true)
         {
-            _model.Increment();         
+            _model.Increment();
+            UpdateView(_model.Count);
             yield return new WaitForSeconds(_delay);
         }
     }
 
-    private void OnCountChanged(int newCount)
+    private void UpdateView(int count)
     {
-        _view.UpdateCount(newCount);
+        _view.UpdateCount(count);
     }
 }
