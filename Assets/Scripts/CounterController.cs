@@ -5,8 +5,8 @@ public class CounterController : MonoBehaviour
 {
     [SerializeField] private View _view;
     [SerializeField] private float _delay = 0.5f;
-
     [SerializeField] private InputReader _inputReader;
+
     private Counter _model;
     private Coroutine _countCoroutine;
 
